@@ -1,0 +1,18 @@
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #4b69fd;
+  padding-top: 120px;
+}
+
+.participante {
+  transform: translateY(31px);
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .cabecalho {
+    padding-top: 60px;
+  }
+}
