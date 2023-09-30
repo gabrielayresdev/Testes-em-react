@@ -9,6 +9,7 @@ const useAdicionaParticipante = () => {
   return (nomeDoParticipante: string) => {
     if (lista.includes(nomeDoParticipante)) {
       setError("Nomes duplicados não são permitidos!");
+      setTimeout(() => setError(null), 3000);
       return;
     }
 

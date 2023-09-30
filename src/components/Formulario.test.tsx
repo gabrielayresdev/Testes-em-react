@@ -1,74 +1,116 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import Formulario from "./Formulario";
 import { RecoilRoot } from "recoil";
 
-// Padão AAA (Arrange, Act and Assert em inglês).
-test("o estado iniciado do formulario", () => {
-  // Arrumamos o cenário (por exemplo, renderizar um componente, buscamos componentes)
-  render(
-    <RecoilRoot>
-      <Formulario />
-    </RecoilRoot>
-  );
+describe("Comportamento do formulário", () => {
+  // Padão AAA (Arrange, Act and Assert em inglês).
+  test("o estado iniciado do formulario", () => {
+    // Arrumamos o cenário (por exemplo, renderizar um componente, buscamos componentes)
+    render(
+      <RecoilRoot>
+        <Formulario />
+      </RecoilRoot>
+    );
 
-  // Agimos (realizamos clicks, definimos valores)
-  const input = screen.getByPlaceholderText("Insira o nome do participante");
-  const botao = screen.getByRole("button");
+    // Agimos (realizamos clicks, definimos valores)
+    const input = screen.getByPlaceholderText("Insira o nome do participante");
+    const botao = screen.getByRole("button");
 
-  // Afirmamos o que queremos (onde realizamos as expectativas)
-  expect(input).toBeInTheDocument();
-  expect(botao).toBeDisabled();
-});
-
-test("Adicionar participante", () => {
-  render(
-    <RecoilRoot>
-      <Formulario />
-    </RecoilRoot>
-  );
-
-  const input = screen.getByPlaceholderText("Insira o nome do participante");
-  const botao = screen.getByRole("button");
-
-  fireEvent.change(input, {
-    target: {
-      value: "Gabriel Ayres",
-    },
+    // Afirmamos o que queremos (onde realizamos as expectativas)
+    expect(input).toBeInTheDocument();
+    expect(botao).toBeDisabled();
   });
 
-  fireEvent.click(botao);
+  test("Adicionar participante", () => {
+    render(
+      <RecoilRoot>
+        <Formulario />
+      </RecoilRoot>
+    );
 
-  expect(input).toHaveFocus();
-  expect(input).toHaveValue("");
-});
+    const input = screen.getByPlaceholderText("Insira o nome do participante");
+    const botao = screen.getByRole("button");
 
-test("Nome duplicados não são aceitos", () => {
-  render(
-    <RecoilRoot>
-      <Formulario />
-    </RecoilRoot>
-  );
+    fireEvent.change(input, {
+      target: {
+        value: "Gabriel Ayres",
+      },
+    });
 
-  const input = screen.getByPlaceholderText<HTMLInputElement>(
-    "Insira o nome do participante"
-  );
-  const botao = screen.getByRole("button");
+    fireEvent.click(botao);
 
-  fireEvent.change(input, {
-    target: {
-      value: "Gabriel Ayres",
-    },
+    expect(input).toHaveFocus();
+    expect(input).toHaveValue("");
   });
-  fireEvent.click(botao);
 
-  fireEvent.change(input, {
-    target: {
-      value: "Gabriel Ayres",
-    },
+  test("Nome duplicados não são aceitos", () => {
+    render(
+      <RecoilRoot>
+        <Formulario />
+      </RecoilRoot>
+    );
+
+    const input = screen.getByPlaceholderText<HTMLInputElement>(
+      "Insira o nome do participante"
+    );
+    const botao = screen.getByRole("button");
+
+    fireEvent.change(input, {
+      target: {
+        value: "Gabriel Ayres",
+      },
+    });
+    fireEvent.click(botao);
+
+    fireEvent.change(input, {
+      target: {
+        value: "Gabriel Ayres",
+      },
+    });
+    fireEvent.click(botao);
+
+    const errorMessage = screen.getByRole("alert");
+
+    expect(errorMessage.textContent).toBe(
+      "Nomes duplicados não são permitidos!"
+    );
   });
-  fireEvent.click(botao);
+  test("Mensagem de erro deve sumir após timers", () => {
+    jest.useFakeTimers();
 
-  const errorMessage = screen.getByRole("alert");
+    render(
+      <RecoilRoot>
+        <Formulario />
+      </RecoilRoot>
+    );
 
-  expect(errorMessage.textContent).toBe("Nomes duplicados não são permitidos!");
+    const input = screen.getByPlaceholderText<HTMLInputElement>(
+      "Insira o nome do participante"
+    );
+    const botao = screen.getByRole("button");
+
+    fireEvent.change(input, {
+      target: {
+        value: "Gabriel Ayres",
+      },
+    });
+    fireEvent.click(botao);
+
+    fireEvent.change(input, {
+      target: {
+        value: "Gabriel Ayres",
+      },
+    });
+    fireEvent.click(botao);
+
+    let errorMessage = screen.queryByRole("alert");
+    expect(errorMessage).toBeInTheDocument();
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    errorMessage = screen.queryByRole("alert");
+    expect(errorMessage).toBeNull();
+  });
 });
