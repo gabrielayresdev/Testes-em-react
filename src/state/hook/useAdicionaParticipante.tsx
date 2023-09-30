@@ -1,9 +1,10 @@
 import { errorMessage, listaParticipantesState } from "../atom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
+import { useListaDeParticipantes } from "./useListaDeParticipantes";
 
 const useAdicionaParticipante = () => {
   const setLista = useSetRecoilState(listaParticipantesState);
-  const lista = useRecoilValue(listaParticipantesState);
+  const lista = useListaDeParticipantes();
   const setError = useSetRecoilState(errorMessage);
 
   return (nomeDoParticipante: string) => {

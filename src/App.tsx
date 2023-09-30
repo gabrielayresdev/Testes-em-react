@@ -3,6 +3,7 @@ import Cabecalho from "./components/Cabecalho/Cabecalho";
 import { RecoilRoot } from "recoil";
 import Formulario from "./components/Formulario";
 import Card from "./components/Card/Card";
+import ListaDeParticipantes from "./components/ListaDeParticipantes/ListaDeParticipantes";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             element={
               <Card>
                 <Formulario />
+                <ListaDeParticipantes />
               </Card>
             }
           />
